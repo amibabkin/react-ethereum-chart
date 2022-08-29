@@ -64,7 +64,7 @@ const Graph = () => {
 
   useEffect(() => {
     getTrans();
-    getObj(state);
+    // getObj(state);
   }, []);
   // console.log(state);
 
