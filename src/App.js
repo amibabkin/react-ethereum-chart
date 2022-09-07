@@ -1,8 +1,8 @@
 import React from "react";
-import Graph from "./components/Graph";
+import GraphPage from "./components/GraphPage";
 
 function App() {
-  return <Graph />;
+  return <GraphPage />;
 }
 
 export default App;

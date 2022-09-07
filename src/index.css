@@ -6,7 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #313e4c;
-  text-align: center;
+  /* text-align: center; */
   margin-top: 2rem;
   font-size: 14px;
 }
