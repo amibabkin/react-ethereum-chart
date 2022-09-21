@@ -12,11 +12,14 @@ import { format, parseISO } from "date-fns";
 import Loader from "../loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../../../store/action-creators/fetchTransactions";
+import { setTime } from "../../../utils/setTime";
 
 const Graph = () => {
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.loading);
-  const transactions = useSelector((state) => state.transactions);
+  const loading = useSelector((state) => state.transactions.loading);
+  const transactions = useSelector((state) => state.transactions.transactions);
+
+  const timeGraph = useSelector((state) => state.times.time);
 
   useEffect(() => {
     dispatch(fetchTransactions());
@@ -42,7 +45,7 @@ const Graph = () => {
         <AreaChart
           width={500}
           height={300}
-          data={transactions}
+          data={setTime(timeGraph, transactions)}
           margin={{
             top: 20,
             right: 30,
