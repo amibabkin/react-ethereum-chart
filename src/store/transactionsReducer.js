@@ -7,7 +7,6 @@ const defaultState = {
 const FETCH_TRANSACTIONS = "FETCH_TRANSACTIONS";
 const FETCH_TRANSACTIONS_ACCESS = "FETCH_TRANSACTIONS_ACCESS";
 const FETCH_TRANSACTIONS_ERROR = "FETCH_TRANSACTIONS_ERROR";
-const GET_ALL_TIME = "GET_ALL_TIME";
 
 export const transactionsReducer = (state = defaultState, action) => {
   switch (action.type) {
@@ -27,8 +26,6 @@ export const transactionsReducer = (state = defaultState, action) => {
         error: action.payload,
         transactions: [],
       };
-    case GET_ALL_TIME:
-      return { ...state, loading: true, error: null, transactions: [] };
 
     default:
       return state;
