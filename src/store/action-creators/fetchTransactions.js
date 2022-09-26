@@ -1,28 +1,30 @@
 import axios from "axios";
 import {
-  addTransactions,
-  addTransactionsAccess,
-  addTransactionsError,
+  addTransactionsAction,
+  addTransactionsAccessAction,
+  addTransactionsErrorAction,
 } from "../transactionsReducer";
-import { formatTime } from "../../utils/formatTime";
+import { formattingTimeToISO } from "../../utils/formattingTimeToISO";
+import { addEthPrice } from "../../utils/addEthPrice";
 
 export const fetchTransactions = () => {
   return async (dispatch) => {
     try {
-      dispatch(addTransactions());
+      dispatch(addTransactionsAction());
       const response = await axios.get(
-        "https://raw.githubusercontent.com/CryptoRStar/GasPriceTestTask/main/gas_price.json"
+        "https://raw.githubusercontent.com/amibabkin/gasPrice/main/gas_price.json"
       );
       const answer = response.data;
       for (const eth in answer) {
         const iterable = answer[eth];
         for (const transaction in iterable) {
-          formatTime(iterable[transaction]);
-          dispatch(addTransactionsAccess(iterable[transaction]));
+          formattingTimeToISO(iterable[transaction]);
+          addEthPrice(iterable[transaction]);
+          dispatch(addTransactionsAccessAction(iterable[transaction]));
         }
       }
     } catch (e) {
-      dispatch(addTransactionsError(e));
+      dispatch(addTransactionsErrorAction(e));
     }
   };
 };

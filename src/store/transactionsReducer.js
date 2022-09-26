@@ -32,12 +32,12 @@ export const transactionsReducer = (state = defaultState, action) => {
   }
 };
 
-export const addTransactions = () => ({ type: FETCH_TRANSACTIONS });
-export const addTransactionsAccess = (payload) => ({
+export const addTransactionsAction = () => ({ type: FETCH_TRANSACTIONS });
+export const addTransactionsAccessAction = (payload) => ({
   type: FETCH_TRANSACTIONS_ACCESS,
   payload,
 });
-export const addTransactionsError = (payload) => ({
+export const addTransactionsErrorAction = (payload) => ({
   type: FETCH_TRANSACTIONS_ERROR,
   payload,
 });

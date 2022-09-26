@@ -7,6 +7,12 @@ import Select from "@mui/material/Select";
 import InputBase from "@mui/material/InputBase";
 import { useDispatch } from "react-redux";
 import { setTimeGraph } from "../../../store/action-creators/setTimeGraph";
+import {
+  allTime,
+  lastDay,
+  lastMonth,
+  lastThreeMonth,
+} from "../../../type/timeTypes";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -49,11 +55,12 @@ export default function SetTimeSelect() {
 
   const handleChange = (event) => {
     setState(event.target.value);
+    //диспатчим состояние в action-creator в setTimeGraph, который меняет состояние с помощью экшенов в setTimeReducer
     dispatch(setTimeGraph(event.target.value));
   };
   return (
     <FormControl sx={{ mt: "15px", ml: "35px", mb: "30px" }} variant="standard">
-      <InputLabel id="demo-customized-select-label">Value</InputLabel>
+      <InputLabel id="demo-customized-select-label">Time frame</InputLabel>
       <Select
         labelId="demo-customized-select-label"
         id="demo-customized-select"
@@ -61,8 +68,10 @@ export default function SetTimeSelect() {
         onChange={handleChange}
         input={<BootstrapInput />}
       >
-        <MenuItem value={"allTime"}>За всё время</MenuItem>
-        <MenuItem value={"lastMonth"}>За последний месяц</MenuItem>
+        <MenuItem value={allTime}>За всё время</MenuItem>
+        <MenuItem value={lastDay}>За последний день</MenuItem>
+        <MenuItem value={lastMonth}>За последний месяц</MenuItem>
+        <MenuItem value={lastThreeMonth}>За последние три месяца</MenuItem>
       </Select>
     </FormControl>
   );

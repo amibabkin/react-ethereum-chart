@@ -12,30 +12,93 @@ import { format, parseISO } from "date-fns";
 import Loader from "../loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../../../store/action-creators/fetchTransactions";
-import { setTime } from "../../../utils/setTime";
+import { getTransactions } from "../../../utils/getTransactions";
+import {
+  allTime,
+  lastDay,
+  lastMonth,
+  lastThreeMonth,
+} from "../../../type/timeTypes";
+import { eth, gwei } from "../../../type/valueTypes";
 
 const Graph = () => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.transactions.loading);
   const transactions = useSelector((state) => state.transactions.transactions);
-
+  const valuePrice1 = useSelector((state) => state.value.value);
   const timeGraph = useSelector((state) => state.times.time);
+  // timeGraph - состояние времени, которое передаётся в getTransactions, который возвращает нужный массив данных
 
   useEffect(() => {
     dispatch(fetchTransactions());
   }, []);
 
   function CustomTooltip({ active, payload, label }) {
-    if (active) {
-      return (
-        <div className="tooltip">
-          <h4>{format(parseISO(label), "eee, hh:mm, d MMM, yyyy")}</h4>
-          <p>{payload[0].value.toFixed(0)} GWEI</p>
-        </div>
-      );
+    console.log(payload);
+    // console.log(payload[0].value);
+    if (valuePrice1 === gwei) {
+      if (active) {
+        return (
+          <div className="tooltip">
+            <h4>{format(parseISO(label), "d MMM, eee, H:mm, yyyy")}</h4>
+            <p>{payload[0].value.toFixed(0)} GWEI</p>
+          </div>
+        );
+      }
     }
+    if (valuePrice1 === eth) {
+      if (Object.keys(payload).length !== 0) {
+        const newPayload = Object.assign({}, payload);
+        newPayload[0].value = newPayload[0].payload.ethPrice;
+        if (active) {
+          return (
+            <div className="tooltip">
+              <h4>{format(parseISO(label), "d MMM, eee, H:mm, yyyy")}</h4>
+              <p>{newPayload[0].value.toFixed(5)} ETH</p>
+            </div>
+          );
+        }
+      }
+    }
+
     return null;
   }
+
+  const formatXAxis = (tick) => {
+    // формат времени по оси x
+    if (timeGraph === lastDay) {
+      return format(parseISO(tick), "H:mm");
+    }
+    if (timeGraph === lastMonth) {
+      return format(parseISO(tick), "eee, dd");
+    }
+    if (timeGraph === allTime) {
+      return format(parseISO(tick), "MMM, dd");
+    }
+    if (timeGraph === lastThreeMonth) {
+      return format(parseISO(tick), "MMM, dd");
+    }
+  };
+
+  const customInterval = () => {
+    // интервалы тиков по оси x
+    if (timeGraph === lastDay) {
+      let interval = 0;
+      return interval;
+    }
+    if (timeGraph === lastMonth) {
+      let interval = 13;
+      return interval;
+    }
+    if (timeGraph === allTime) {
+      let interval = 300;
+      return interval;
+    }
+    if (timeGraph === lastThreeMonth) {
+      let interval = 90;
+      return interval;
+    }
+  };
 
   return (
     <ResponsiveContainer width="100%" aspect={3}>
@@ -45,7 +108,7 @@ const Graph = () => {
         <AreaChart
           width={500}
           height={300}
-          data={setTime(timeGraph, transactions)}
+          data={getTransactions(timeGraph, transactions)}
           margin={{
             top: 20,
             right: 30,
@@ -60,16 +123,30 @@ const Graph = () => {
             </linearGradient>
           </defs>
           <CartesianGrid opacity={0.1} vertical={false} />
-          <Area dataKey="gasPrice" stroke="#2451B7" fill="url(#color)" />
+
+          {valuePrice1 === gwei ? (
+            <Area
+              dataKey="gasPrice"
+              name="gasPrice"
+              stroke="#2451B7"
+              fill="url(#color)"
+            />
+          ) : (
+            <Area
+              dataKey="ethPrice"
+              name="ethPrice"
+              stroke="#2451B7"
+              fill="url(#color)"
+            />
+          )}
+
           <XAxis
             dataKey="time"
             tick={{ fill: "#fff" }}
             axisLine={false}
             tickLine={false}
-            // tickFormatter={() => {}}
-            tickFormatter={(str) => {
-              return format(parseISO(str), "dd-hh:mm");
-            }}
+            interval={customInterval()}
+            tickFormatter={formatXAxis}
             // tickFormatter={(str) => {
             //   const date = parseISO(str);
             //   if (date.getDate() % 7 === 0) {
@@ -82,7 +159,11 @@ const Graph = () => {
             tick={{ fill: "#fff" }}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(number) => `${number.toFixed(0)}`}
+            tickFormatter={(number) =>
+              valuePrice1 === gwei
+                ? `${number.toFixed(0)}`
+                : `${number.toFixed(5)}`
+            }
           />
           <Tooltip content={<CustomTooltip />} />
         </AreaChart>

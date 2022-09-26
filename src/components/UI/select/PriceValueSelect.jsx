@@ -5,6 +5,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputBase from "@mui/material/InputBase";
+import { gwei, eth } from "../../../type/valueTypes";
+import { useDispatch } from "react-redux";
+import { setValueGraph } from "../../../store/action-creators/setValueGraph";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -19,7 +22,6 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     fontSize: 16,
     padding: "10px 26px 10px 12px",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
@@ -42,10 +44,12 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PriceValueSelect() {
-  const [calc, setCalc] = useState("G");
+  const [state, setState] = useState("gwei");
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
-    setCalc(event.target.value);
+    setState(event.target.value);
+    dispatch(setValueGraph(event.target.value));
   };
   return (
     <FormControl sx={{ mt: "15px", ml: "35px", mb: "30px" }} variant="standard">
@@ -53,12 +57,12 @@ export default function PriceValueSelect() {
       <Select
         labelId="demo-customized-select-label"
         id="demo-customized-select"
-        value={calc}
+        value={state}
         onChange={handleChange}
         input={<BootstrapInput />}
       >
-        <MenuItem value={"G"}>GWEI</MenuItem>
-        <MenuItem value={"E"}>ETH</MenuItem>
+        <MenuItem value={gwei}>GWEI</MenuItem>
+        <MenuItem value={eth}>ETH</MenuItem>
       </Select>
     </FormControl>
   );
